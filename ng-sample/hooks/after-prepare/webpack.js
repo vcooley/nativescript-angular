@@ -24,7 +24,7 @@ module.exports = function (logger, platformsData, projectData, hookArgs) {
             if (code === 0) {
                 //shelljs.rm("-rf", path.join(outDir, "app", "*"))
                 shelljs.rm("-rf", path.join(outDir, "app", "main-page*"));
-                shelljs.mv("bundle.js", path.join(outDir, "app", "index.js"));
+                shelljs.mv("-f", "bundle.js", path.join(projectData.projectDir, "app", "snapshot.js"));
 
                 var packageJson = path.join(outDir, "app", "starter.js");
                 shelljs.sed("-i", /require.*app\.js.*;/, "require('./index.js');", packageJson);

@@ -8,7 +8,7 @@ module.exports = {
     //context: "./platforms/android/src/main/assets/app",
     context: process.env.PROJECT_DIR,
     entry: {
-        app: "./app",
+        app: "./app/starter.js",
     },
     output: {
         path: __dirname,
