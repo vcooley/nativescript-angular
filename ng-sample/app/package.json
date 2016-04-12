@@ -1,6 +1,6 @@
 {
     "name": "tns-template-hello-world",
-    "main": "starter.js",
+    "main": "snapshot-starter.js",
     "version": "1.2.0",
     "author": "Telerik <support@telerik.com>",
     "description": "Nativescript hello-world project template",
@@ -20,6 +20,11 @@
     },
     "bugs": {
         "url": "https://github.com/NativeScript/template-hello-world/issues"
+    },
+    "android": {
+        "v8Flags": "--expose_gc",
+        "heapSnapshot": "true",
+        "heapSnapshotScript": "snapshot.js"
     },
     "homepage": "https://github.com/NativeScript/template-hello-world"
 }
