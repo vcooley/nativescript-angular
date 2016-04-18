@@ -34,11 +34,16 @@
 		"zone.js": "0.5.15"
 	},
 	"devDependencies": {
+		"babel-traverse": "6.7.6",
+		"babel-types": "6.7.2",
+		"babylon": "6.7.0",
+		"filewalker": "0.1.2",
 		"grunt": "0.4.5",
 		"grunt-contrib-clean": "0.6.0",
 		"grunt-contrib-copy": "0.8.0",
 		"grunt-shell": "1.1.2",
 		"grunt-ts": "5.0.0-beta.5",
+		"lazy": "1.0.11",
 		"nativescript-dev-typescript": "^0.3.1",
 		"shelljs": "^0.5.3",
 		"typescript": "1.8.2",
@@ -47,7 +52,7 @@
 	"nativescript": {
 		"id": "org.nativescript.ngsample",
 		"tns-android": {
-			"version": "1.7.0"
+			"version": "2.0.0"
 		}
 	}
 }
