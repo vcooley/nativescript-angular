@@ -1,4 +1,4 @@
-//make sure you import mocha-config before angular2/core
+//make sure you import mocha-config before @angular/core
 import {assert} from "./test-config";
 import {
     Type,

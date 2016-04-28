@@ -1,4 +1,4 @@
-//make sure you import mocha-config before angular2/core
+//make sure you import mocha-config before @angular/core
 import {bootstrap, ProviderArray} from "nativescript-angular/application";
 import {Type, Component, ComponentRef, DynamicComponentLoader,
     ViewChild, ElementRef, provide, ApplicationRef, Renderer, ViewContainerRef
