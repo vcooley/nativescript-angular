@@ -3,7 +3,7 @@ import {isBlank, isPresent} from '@angular/core/src/facade/lang';
 import {StringMapWrapper} from '@angular/core/src/facade/collection';
 
 import {Attribute, DynamicComponentLoader, ComponentRef, ViewContainerRef,
-    ElementRef, ReflectiveInjector, provide, Type, Component} from '@angular/core';
+    ElementRef, ReflectiveInjector, provide, Type, Component, Inject} from '@angular/core';
 
 import * as routerHooks from '@angular/router/src/lifecycle/lifecycle_annotations';
 import {hasLifecycleHook} from '@angular/router/src/lifecycle/route_lifecycle_reflector';
@@ -13,9 +13,12 @@ import {Router, RouterOutlet, RouteData, RouteParams, ComponentInstruction,
 import {LocationStrategy} from '@angular/common';
 import {topmost} from "ui/frame";
 import {Page, NavigatedData} from "ui/page";
+import {DEVICE} from "../platform-providers";
+import {Device} from "platform";
 import {log} from "./common";
 import {NSLocationStrategy} from "./ns-location-strategy";
 import {DetachedLoader} from "../common/detached-loader";
+import {ViewUtil} from "../view-util";
 
 let _resolveToTrue = PromiseWrapper.resolve(true);
 
@@ -66,13 +69,17 @@ export class PageRouterOutlet extends RouterOutlet {
 
     private componentRef: ComponentRef = null;
     private currentInstruction: ComponentInstruction = null;
+    private viewUtil: ViewUtil;
 
     constructor(private containerRef: ViewContainerRef,
         private loader: DynamicComponentLoader,
         private parentRouter: Router,
         @Attribute('name') nameAttr: string,
-        private location: NSLocationStrategy) {
+        private location: NSLocationStrategy,
+        @Inject(DEVICE) device: Device
+        ) {
         super(containerRef, loader, parentRouter, nameAttr);
+        this.viewUtil = new ViewUtil(device);
     }
 
     /**
@@ -154,9 +161,7 @@ export class PageRouterOutlet extends RouterOutlet {
         //Component loaded. Find its root native view.
         const componentView = componentRef.location.nativeElement;
         //Remove it from original native parent.
-        if (<any>componentView.parent) {
-            (<any>componentView.parent).removeChild(componentView);
-        }
+        this.viewUtil.removeChild(componentView.parent, componentView);
         //Add it to the new page
         page.content = componentView;
 
