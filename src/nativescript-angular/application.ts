@@ -4,7 +4,7 @@ import "zone.js/dist/zone-node"
 
 import 'reflect-metadata';
 import './polyfills/array';
-import {isPresent, Type} from '@angular/core/src/facade/lang';
+import {isPresent, Type, print} from '@angular/core/src/facade/lang';
 import {ReflectiveInjector, reflector, coreLoadAndBootstrap, createPlatform, 
         getPlatform, assertPlatform, ComponentRef, PlatformRef, PLATFORM_DIRECTIVES, PLATFORM_PIPES} from '@angular/core';
 import {bind, provide, Provider} from '@angular/core/src/di';
@@ -38,6 +38,13 @@ export interface AppOptions {
     startPageActionBarHidden?: boolean;
 }
 
+class ConsoleLogger {
+  log = print;
+  logError = print;
+  logGroup = print;
+  logGroupEnd() {}
+}
+
 export function bootstrap(appComponentType: any,
     customProviders: ProviderArray = null): Promise<ComponentRef> {
     NativeScriptDomAdapter.makeCurrent();
@@ -52,7 +59,9 @@ export function bootstrap(appComponentType: any,
         provide(PLATFORM_PIPES, { useValue: COMMON_PIPES, multi: true }),
         provide(PLATFORM_DIRECTIVES, { useValue: COMMON_DIRECTIVES, multi: true }),
         provide(PLATFORM_DIRECTIVES, { useValue: NS_DIRECTIVES, multi: true }),
-        provide(ExceptionHandler, { useFactory: () => new ExceptionHandler(null, true), deps: [] }),
+        provide(ExceptionHandler, { useFactory: () => {
+            return new ExceptionHandler(new ConsoleLogger(), true)
+        }, deps: [] }),
 
         defaultPageProvider,
         defaultDeviceProvider,
