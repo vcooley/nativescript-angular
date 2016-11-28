@@ -60,6 +60,8 @@ export const COMMON_PROVIDERS = [
     { provide: Sanitizer, useClass: NativeScriptSanitizer },
 ];
 
+var __nativeScript_platform_started = false;
+
 export class NativeScriptPlatformRef extends PlatformRef {
     private _bootstrapper: BootstrapperAction;
 
@@ -97,11 +99,29 @@ export class NativeScriptPlatformRef extends PlatformRef {
             (<any>application).cssFile = this.appOptions.cssFile;
         }
 
-        application.start(mainPageEntry);
+        if (__nativeScript_platform_started) {
+            var frame = topmost();
+            if (frame) {
+               var animated = frame.animated;
+               frame.animated = false;
+               mainPageEntry.clearHistory = true;
+               frame.navigate(mainPageEntry);
+               frame.animated = animated;
+            }
+        }
+        else {
+            __nativeScript_platform_started = true;
+            application.start(mainPageEntry);
+        }
     }
 
     livesyncModule(): void {
         rendererLog("ANGULAR LiveSync Started");
+
+        if (global["__appReload"]) {
+            global["__appReload"]();
+            return;
+        }
 
         onBeforeLivesync.next(lastBootstrappedModule ? lastBootstrappedModule.get() : null);
 
