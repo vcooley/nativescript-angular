@@ -35,6 +35,12 @@ ng-sample/lib
 ng-sample/node_modules
 ng-sample/app/nativescript-angular
 
+perf-test/app/**/*.js
+perf-test/test-output.txt
+perf-test/platforms
+perf-test/lib
+perf-test/node_modules
+
 startup-test/platforms
 startup-test/lib
 startup-test/node_modules

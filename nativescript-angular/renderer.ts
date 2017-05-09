@@ -14,6 +14,7 @@ import { isBlank } from "./lang-facade";
 import { ViewUtil } from "./view-util";
 import { NgView, CommentNode } from "./element-types";
 import { rendererLog as traceLog } from "./trace";
+import { profileMethod } from "./profiling";
 
 // CONTENT_ATTR not exported from NativeScript_renderer - we need it for styles application.
 const COMPONENT_REGEX = /%COMP%/g;
@@ -82,95 +83,114 @@ export class NativeScriptRenderer extends Renderer2 {
         traceLog("NativeScriptRenderer created");
     }
 
+    @profileMethod()
     appendChild(parent: any, newChild: NgView): void {
         traceLog(`NativeScriptRenderer.appendChild child: ${newChild} parent: ${parent}`);
         this.viewUtil.insertChild(parent, newChild);
     }
 
+    @profileMethod()    
     insertBefore(parent: NgView, newChild: NgView, refChildIndex: number): void {
         traceLog(`NativeScriptRenderer.insertBefore child: ${newChild} parent: ${parent}`);
         this.viewUtil.insertChild(parent, newChild, refChildIndex);
     }
 
+    @profileMethod()
     removeChild(parent: any, oldChild: NgView): void {
         traceLog(`NativeScriptRenderer.removeChild child: ${oldChild} parent: ${parent}`);
         this.viewUtil.removeChild(parent, oldChild);
     }
 
+    @profileMethod()
     selectRootElement(selector: string): NgView {
         traceLog("selectRootElement: " + selector);
         return this.rootView;
     }
 
+    @profileMethod()
     parentNode(node: NgView): any {
         return node.parent || node.templateParent;
     }
 
+    @profileMethod()
     nextSibling(node: NgView): number {
         traceLog(`NativeScriptRenderer.nextSibling ${node}`);
         return this.viewUtil.nextSiblingIndex(node);
     }
 
+    @profileMethod()
     createComment(_value: any): CommentNode {
         traceLog(`NativeScriptRenderer.createComment ${_value}`);
         return this.viewUtil.createComment();
     }
 
+    @profileMethod()
     createElement(name: any, _namespace: string): NgView {
         traceLog(`NativeScriptRenderer.createElement: ${name}`);
         return this.viewUtil.createView(name);
     }
 
+    @profileMethod()
     createText(_value: string): CommentNode {
         traceLog(`NativeScriptRenderer.createText ${_value}`);
         return this.viewUtil.createText();
     }
 
+    @profileMethod()
     createViewRoot(hostElement: NgView): NgView {
         traceLog(`NativeScriptRenderer.createViewRoot ${hostElement.nodeName}`);
         return hostElement;
     }
 
+    @profileMethod()
     projectNodes(parentElement: NgView, nodes: NgView[]): void {
         traceLog("NativeScriptRenderer.projectNodes");
         nodes.forEach((node) => this.viewUtil.insertChild(parentElement, node));
     }
 
+    @profileMethod()
     destroy() {
         traceLog("NativeScriptRenderer.destroy");
         // Seems to be called on component dispose only (router outlet)
         // TODO: handle this when we resolve routing and navigation.
     }
 
+    @profileMethod()
     setAttribute(view: NgView, name: string, value: string, namespace?: string) {
         traceLog(`NativeScriptRenderer.setAttribute ${view} : ${name} = ${value}, namespace: ${namespace}`);
         return this.viewUtil.setProperty(view, name, value, namespace);
     }
 
+    @profileMethod()
     removeAttribute(_el: NgView, _name: string): void {
         traceLog(`NativeScriptRenderer.removeAttribute ${_el}: ${_name}`);
     }
 
+    @profileMethod()
     setProperty(view: any, name: string, value: any) {
         traceLog(`NativeScriptRenderer.setProperty ${view} : ${name} = ${value}`);
         return this.viewUtil.setProperty(view, name, value);
     }
 
+    @profileMethod()
     addClass(view: NgView, name: string): void {
         traceLog(`NativeScriptRenderer.addClass ${name}`);
         this.viewUtil.addClass(view, name);
     }
 
+    @profileMethod()
     removeClass(view: NgView, name: string): void {
         traceLog(`NativeScriptRenderer.removeClass ${name}`);
         this.viewUtil.removeClass(view, name);
     }
 
+    @profileMethod()
     setStyle(view: NgView, styleName: string, value: any, _flags?: RendererStyleFlags2): void {
         traceLog(`NativeScriptRenderer.setStyle: ${styleName} = ${value}`);
         this.viewUtil.setStyle(view, styleName, value);
     }
 
+    @profileMethod()
     removeStyle(view: NgView, styleName: string, _flags?: RendererStyleFlags2): void {
         traceLog("NativeScriptRenderer.removeStyle: ${styleName}");
         this.viewUtil.removeStyle(view, styleName);
@@ -178,23 +198,28 @@ export class NativeScriptRenderer extends Renderer2 {
 
     // Used only in debug mode to serialize property changes to comment nodes,
     // such as <template> placeholders.
+    @profileMethod()
     setBindingDebugInfo(renderElement: NgView, propertyName: string, propertyValue: string): void {
         traceLog("NativeScriptRenderer.setBindingDebugInfo: " + renderElement + ", " +
             propertyName + " = " + propertyValue);
     }
 
+    @profileMethod()
     setElementDebugInfo(renderElement: any, _info: any /*RenderDebugInfo*/): void {
         traceLog("NativeScriptRenderer.setElementDebugInfo: " + renderElement);
     }
 
+    @profileMethod()
     invokeElementMethod(_renderElement: NgView, methodName: string, args: Array<any>) {
         traceLog("NativeScriptRenderer.invokeElementMethod " + methodName + " " + args);
     }
 
+    @profileMethod()
     setValue(_renderNode: any, _value: string) {
         traceLog("NativeScriptRenderer.setValue");
     }
 
+    @profileMethod()
     listen(renderElement: any, eventName: string, callback: (event: any) => boolean):
         () => void {
         traceLog("NativeScriptRenderer.listen: " + eventName);

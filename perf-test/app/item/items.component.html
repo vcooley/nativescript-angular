@@ -1,0 +1,12 @@
+<ActionBar title="My App" class="action-bar">
+</ActionBar>
+<GridLayout rows="auto *" class="page">
+
+    <Button text="dump" (tap)="dump()"></Button>
+
+    <ListView [items]="items" row="1" class="list-group">
+        <ng-template let-item="item">
+            <Label [nsRouterLink]="['/item', item.id]" [text]="item.name" class="list-group-item"></Label>
+        </ng-template>
+    </ListView>
+</GridLayout>
