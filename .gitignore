@@ -35,9 +35,9 @@ ng-sample/lib
 ng-sample/node_modules
 ng-sample/app/nativescript-angular
 
-startup-test/platforms
-startup-test/lib
-startup-test/node_modules
+perf-test/platforms
+perf-test/hooks
+ng-sample/app/**/*.js
 
 # IDEs and editors
 /.idea
