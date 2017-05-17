@@ -37,7 +37,9 @@ ng-sample/app/nativescript-angular
 
 perf-test/platforms
 perf-test/hooks
-ng-sample/app/**/*.js
+perf-test/app/**/*.js
+perf-test/app/**/*.ngfactory.ts
+perf-test/app/**/*.ngsummary.json
 
 # IDEs and editors
 /.idea

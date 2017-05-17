@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { GC } from "tns-core-modules/utils/utils";
-import { dumpProfiles, resetProfiles } from "tns-core-modules/profiling";
+import { 
+  // resetProfiles,
+  dumpProfiles
+ } from "tns-core-modules/profiling";
 
 const titles = ["Etiam lacinia", "Imperdiet ante", "A interdum", "Quisque tempus", "Sodales viverra"];
 const bodies = [
@@ -65,6 +68,6 @@ export class RendererTestComponent {
   }
 
   reset(){
-    resetProfiles()
+    // resetProfiles()
   }
 }

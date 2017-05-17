@@ -1,9 +1,20 @@
-// this import should be first in order to load some required settings (like globals and reflect-metadata)
 import { enable } from "tns-core-modules/profiling";
 enable();
 
-import { platformNativeScriptDynamic } from "nativescript-angular/platform";
+import * as application from "tns-core-modules/application";
+import { Page } from "tns-core-modules/ui/page";
+import { Button } from "tns-core-modules/ui/button";
 
-import { AppModule } from "./app.module";
+application.start({
+    create: (): Page => {
+        const page = new Page();
+        const startBtn = new Button();
+        startBtn.text = "start";
+        startBtn.on("tap", () => {
+            require("./bootstrap-ng-app");
+        })
 
-platformNativeScriptDynamic().bootstrapModule(AppModule);
+        page.content = startBtn;
+        return page;
+    }
+});
