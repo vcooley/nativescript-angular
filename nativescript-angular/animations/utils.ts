@@ -5,17 +5,18 @@ import {
 import { CssAnimationProperty } from "tns-core-modules/ui/core/properties";
 import { AnimationCurve } from "tns-core-modules/ui/enums";
 
-export interface Keyframe {
+export type Keyframe = {
     [key: string]: string | number;
-}
+};
 
-interface Transformation {
+type Transformation = {
     property: string;
-    value: number | { x: number, y: number };
-}
+    value: TransformationValue;
+};
 
-const TRANSFORM_MATCHER = new RegExp(/(.+)\((.+)\)/);
-const TRANSFORM_SPLITTER = new RegExp(/[\s,]+/);
+type TransformationValue = number | { x: number, y: number };
+
+const TRANSFORM_SPLITTER = new RegExp(/([a-zA-Z\-]+)\((.*?)\)/g);
 
 const STYLE_TRANSFORMATION_MAP = Object.freeze({
     "scale": value => ({ property: "scale", value }),
@@ -39,31 +40,17 @@ const STYLE_TRANSFORMATION_MAP = Object.freeze({
 
 const STYLE_CURVE_MAP = Object.freeze({
     "ease": AnimationCurve.ease,
-    "linear": AnimationCurve.linear,
     "ease-in": AnimationCurve.easeIn,
-    "ease-out": AnimationCurve.easeOut,
     "ease-in-out": AnimationCurve.easeInOut,
+    "ease-out": AnimationCurve.easeOut,
+    "linear": AnimationCurve.linear,
     "spring": AnimationCurve.spring,
 });
 
 export function getAnimationCurve(value: string): any {
-    if (!value) {
-        return AnimationCurve.ease;
-    }
-
-    const curve = STYLE_CURVE_MAP[value];
-    if (curve) {
-        return curve;
-    }
-
-    const [, property = "", pointsString = ""] = TRANSFORM_MATCHER.exec(value) || [];
-    const coords = pointsString.split(TRANSFORM_SPLITTER).map(stringToBezieCoords);
-
-    if (property !== "cubic-bezier" || coords.length !== 4) {
-        throw new Error(`Invalid value for animation: ${value}`);
-    } else {
-        return (<any>AnimationCurve).cubicBezier(...coords);
-    }
+    return value ?
+        STYLE_CURVE_MAP[value] || parseCubicBezierCurve(value) :
+        AnimationCurve.ease;
 }
 
 export function parseAnimationKeyframe(styles: Keyframe) {
@@ -79,13 +66,31 @@ export function parseAnimationKeyframe(styles: Keyframe) {
             }
             declarations.push({ property: property.name, value });
         } else if (typeof value === "string" && prop === "transform") {
-            declarations.push(...parseTransformation(<string>value));
+            declarations.push(...calculateTransformation(<string>value));
         }
+
+        console.dir(declarations);
 
         return declarations;
     }, new Array<KeyframeDeclaration>());
 
     return keyframeInfo;
+}
+
+function parseCubicBezierCurve(value: string) {
+    const coordsString = /\((.*?)\)/.exec(value);
+    const coords = coordsString && coordsString[1]
+        .split(",")
+        .map(stringToBezieCoords);
+
+    if (value.startsWith("cubic-bezier") &&
+        coordsString &&
+        coords.length === 4) {
+
+        return (<any>AnimationCurve).cubicBezier(...coords);
+    } else {
+        throw new Error(`Invalid value for animation: ${value}`);
+    }
 }
 
 function stringToBezieCoords(value: string): number {
@@ -99,8 +104,8 @@ function stringToBezieCoords(value: string): number {
     return result;
 }
 
-function parseTransformation(styleString: string): KeyframeDeclaration[] {
-    return parseStyle(styleString)
+function calculateTransformation(text: string): KeyframeDeclaration[] {
+    return parseTransformString(text)
         .reduce((transformations, style) => {
             const transform = STYLE_TRANSFORMATION_MAP[style.property](style.value);
 
@@ -114,26 +119,28 @@ function parseTransformation(styleString: string): KeyframeDeclaration[] {
         }, new Array<Transformation>());
 }
 
-function parseStyle(text: string): Transformation[] {
-    return text.split(TRANSFORM_SPLITTER).map(stringToTransformation).filter(t => !!t);
-}
+function parseTransformString(text: string): Transformation[] {
+    let matches: Transformation[] = [];
+    let match;
+    // tslint:disable-next-line
+    while ((match = TRANSFORM_SPLITTER.exec(text)) !== null) {
+        const property = match[1];
+        const value = parseValue(match[2]);
 
-function stringToTransformation(text: string): Transformation {
-    const [, property = "", stringValue = ""] = TRANSFORM_MATCHER.exec(text) || [];
-    if (!property) {
-        return;
+        matches.push({property, value });
     }
 
+    return matches;
+}
+
+function parseValue(stringValue: string): TransformationValue {
     const [x, y] = stringValue.split(",").map(parseFloat);
+
     if (x && y) {
-        return { property, value: {x, y} };
+        return { x, y };
     } else {
-        let value: number = x;
-
-        if (stringValue.slice(-3) === "rad") {
-            value *= 180.0 / Math.PI;
-        }
-
-        return { property, value };
+        return stringValue.slice(-3) === "rad" ?
+            x * (180.0 / Math.PI) :
+            x;
      }
 }
